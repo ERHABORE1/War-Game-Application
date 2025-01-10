@@ -52,3 +52,27 @@ The **War Game Application** is a card-based game built using .NET and Blazor. T
 ├── appsettings.json                  # Application configuration
 ├── Program.cs                        # Application entry point
 └── War_Game_App.sln                  # Visual Studio solution file
+
+
+## Gameplay Instructions
+
+- Navigate to the game page.
+- Use the interface to shuffle, deal, and play cards.
+- Follow on-screen instructions to compete and win rounds.
+
+## Screenshots
+
+### Home Page
+![Home Page](assets/Screenshot%20(104).png)
+
+### Game Page
+![Game Page](assets/Screenshot%20(105).png)
+
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+## Contact
+
+For any questions or feedback, feel free to reach out at [erhabore1@etsu.edu](mailto:erhabore1@etsu.edu).
+
