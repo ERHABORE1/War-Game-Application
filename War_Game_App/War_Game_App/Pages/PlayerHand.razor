@@ -1,0 +1,37 @@
+﻿@using War_Game_App.Services
+@using War_Game_Project
+@inject ICardWarService CardWarService
+
+<h3>PlayerHand</h3>
+
+@code {
+    /// <summary>
+    /// Gets or sets the name of the player whose hand is displayed.
+    /// </summary>
+    [Parameter]
+    public string PlayerName { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets the hand of cards for the specified player.
+    /// </summary>
+    [Parameter]
+    public Hand PlayerCards { get; set; }
+
+    /// <summary>
+    /// Calculates the number of cards in the player's hand.
+    /// </summary>
+    public int HandSize => PlayerCards?.handsize() ?? 0;
+}
+
+<div class="player-hand">
+    <h3>@PlayerName's Hand</h3>
+    <p>Hand Size: @HandSize</p>
+
+    <!-- List each card in the player's hand -->
+    <ul>
+        @foreach (var card in PlayerCards.cards)
+        {
+            <li>@card.Rank of @card.Suit</li>
+        }
+    </ul>
+</div>

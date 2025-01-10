@@ -1,0 +1,98 @@
+﻿@page "/"
+@using War_Game_App.Services
+@inject ICardWarService CardWarService
+
+<PageTitle>Card War Game</PageTitle>
+
+<div class="index-container">
+    <h1>Welcome to the Card War Game!</h1>
+
+    <!-- Instructions Section -->
+    <div class="instructions">
+        <h2>How to Play</h2>
+        <p>This is a modified version of the classic card game “War.” The game is played as follows:</p>
+        <ul>
+            <li>Select the number of players (2 to 4) using the dropdown below.</li>
+            <li>Each player is dealt an equal portion of a shuffled deck of 52 randomly generated cards.</li>
+            <li>Each round, players reveal the top card from their hands simultaneously.</li>
+            <li>The player with the highest-ranked card wins the round and collects all played cards.</li>
+            <li>If there’s a tie, cards are set aside, and the next round’s winner collects all cards in play.</li>
+            <li>The game continues until one player collects all 52 cards, becoming the overall winner.</li>
+        </ul>
+        <p>Good luck!</p>
+    </div>
+
+    <!-- Player Selection and Start Button -->
+    <p>Select the number of players:</p>
+    <select @bind="playerCount">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+    </select>
+
+    <a href="/game" @onclick="SetPlayerCount" class="button-link">
+        Start Game
+    </a>
+</div>
+
+@code {
+    private int playerCount = 2; // Default player count
+
+    /// <summary>
+    /// Sets the selected player count in CardWarService before starting the game.
+    /// </summary>
+    private void SetPlayerCount()
+    {
+        CardWarService.PlayerCount = playerCount;
+    }
+}
+
+<style>
+    /* Main container styling */
+    .index-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    /* Instructions section styling */
+    .instructions {
+        margin: 20px 0;
+        padding: 15px;
+        background-color: #f8f9fa;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+        .instructions h2 {
+            color: #343a40;
+        }
+
+        .instructions ul {
+            text-align: left;
+            padding-left: 20px;
+            margin: 10px 0;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+    /* Button link styling */
+    .button-link {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+    }
+
+        .button-link:hover {
+            background-color: #0056b3;
+        }
+</style>

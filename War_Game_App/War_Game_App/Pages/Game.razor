@@ -1,0 +1,280 @@
+﻿@page "/game"
+@using War_Game_App.Services
+@using War_Game_Project
+@inject ICardWarService CardWarService
+
+<div class="game-container">
+    <h1 class="game-title">Card War Game</h1>
+
+    <!-- Display loading message if the game hasn't started -->
+    @if (!gameStarted)
+    {
+        <p class="loading-message">Setting up the game, please wait...</p>
+    }
+    else
+    {
+        <!-- Game controls: Play Round and Restart Game buttons -->
+        <div class="controls">
+            <button @onclick="PlayRound" class="game-button">Play Round</button>
+            <button @onclick="RestartGame" class="game-button restart">Restart Game</button>
+        </div>
+
+        <h2 class="round-info">Round: @currentRound</h2>
+
+        <!-- Display each player's hand and current card played -->
+        <div class="players-container">
+            @foreach (var playerName in playerNames)
+            {
+                if (CardWarService.PlayerHands.playerHands.TryGetValue(playerName, out var playerHand))
+                {
+                    <div class="player-card">
+                        <h3 class="player-name">@playerName's Hand</h3>
+                        <p class="player-info">Cards Left: @playerHand.handsize()</p>
+                        <p class="player-info">Current Card: @(CardWarService.PlayedCards.playedCards.TryGetValue(playerName, out var card) ? $"{card.Rank} of {card.Suit}" : "No card")</p>
+                    </div>
+                }
+            }
+        </div>
+
+        <!-- Display the winner of the current round -->
+        @if (winner != null)
+        {
+            <div class="round-winner">
+                <h2>@winner wins the round!</h2>
+            </div>
+        }
+
+        <!-- Display the overall game winner when game over -->
+        @if (gameOver)
+        {
+            <div class="game-winner">
+                <h1>Game Over! @winner is the overall winner!</h1>
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private bool gameStarted = false; // Tracks if the game has started
+    private bool gameOver = false;    // Tracks if the game has ended
+    private int currentRound = 1;     // Current round number
+    private List<string> playerNames = new(); // List of player names
+    private string winner = null;     // Name of the current round winner
+
+    /// <summary>
+    /// Initializes the game when the component is first rendered.
+    /// </summary>
+    protected override void OnInitialized()
+    {
+        InitializeGame();
+    }
+
+    /// <summary>
+    /// Sets up the game by creating player hands and dealing cards.
+    /// </summary>
+    private void InitializeGame()
+    {
+        gameStarted = true;
+        currentRound = 1;
+        gameOver = false;
+        winner = null;
+
+        var playerCount = CardWarService.PlayerCount;
+        playerNames = Enumerable.Range(1, playerCount).Select(i => $"Player {i}").ToList();
+        CardWarService.PlayerHands = new PlayerHands();
+        CardWarService.PlayedCards = new PlayedCards();
+
+        var deck = GenerateRandomDeck();
+        var deckSizePerPlayer = deck.Count / playerCount;
+
+        foreach (var playerName in playerNames)
+        {
+            CardWarService.PlayerHands.addname(playerName);
+            for (int i = 0; i < deckSizePerPlayer; i++)
+            {
+                CardWarService.PlayerHands.addCard(playerName, deck.Pop());
+            }
+        }
+    }
+
+    /// <summary>
+    /// Generates a shuffled deck of 52 random cards.
+    /// </summary>
+    /// <returns>A stack of 52 random cards.</returns>
+    private Stack<Card> GenerateRandomDeck()
+    {
+        var deck = new Stack<Card>();
+        var random = new Random();
+        var suits = Enum.GetValues(typeof(Suit)).Cast<Suit>().ToArray();
+        var ranks = Enum.GetValues(typeof(Rank)).Cast<Rank>().ToArray();
+
+        while (deck.Count < 52)
+        {
+            deck.Push(new Card { Suit = suits[random.Next(suits.Length)], Rank = ranks[random.Next(ranks.Length)] });
+        }
+
+        return deck;
+    }
+
+    /// <summary>
+    /// Plays a round by drawing cards for each player and determining the round winner.
+    /// </summary>
+    private void PlayRound()
+    {
+        winner = null;
+        CardWarService.PlayedCards.playedCards.Clear();
+
+        foreach (var playerName in playerNames)
+        {
+            var hand = CardWarService.PlayerHands.playerHands[playerName];
+            var card = hand.DrawCard();
+            if (card != null)
+            {
+                CardWarService.PlayedCards.addCard(playerName, card);
+            }
+        }
+
+        var winningCard = CardWarService.PlayedCards.playedCards.Values.OrderByDescending(c => c.Rank).FirstOrDefault();
+        var winningPlayers = CardWarService.PlayedCards.playedCards
+            .Where(p => p.Value.Rank == winningCard.Rank)
+            .Select(p => p.Key).ToList();
+
+        if (winningPlayers.Count == 1)
+        {
+            winner = winningPlayers[0];
+            var winningHand = CardWarService.PlayerHands.playerHands[winner];
+            foreach (var card in CardWarService.PlayedCards.playedCards.Values)
+            {
+                winningHand.getCard(card);
+            }
+        }
+        else
+        {
+            winner = "No winner this round due to a tie!";
+        }
+
+        if (CardWarService.PlayerHands.playerHands.Any(ph => ph.Value.handsize() == 52))
+        {
+            gameOver = true;
+        }
+
+        currentRound++;
+    }
+
+    /// <summary>
+    /// Restarts the game by reinitializing the player hands and deck.
+    /// </summary>
+    private void RestartGame()
+    {
+        InitializeGame();
+    }
+}
+<style>
+    /* Container styling for the game */
+    .game-container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #f8f9fa;
+    }
+
+    /* Title styling */
+    .game-title {
+        text-align: center;
+        font-size: 2rem;
+        color: #343a40;
+    }
+
+    /* Message shown while game is loading */
+    .loading-message {
+        text-align: center;
+        font-size: 1.2rem;
+        color: #6c757d;
+    }
+
+    /* Button styling for game controls */
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .game-button {
+        padding: 10px 20px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+        .game-button:hover {
+            background-color: #0056b3;
+        }
+
+    .restart {
+        background-color: #dc3545;
+    }
+
+        .restart:hover {
+            background-color: #c82333;
+        }
+
+    /* Round info and player display */
+    .round-info {
+        text-align: center;
+        font-size: 1.5rem;
+        margin: 20px 0;
+        color: #343a40;
+    }
+
+    .players-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .player-card {
+        border: 1px solid #ced4da;
+        padding: 15px;
+        width: 180px;
+        border-radius: 5px;
+        background-color: #ffffff;
+    }
+
+    .player-name {
+        font-size: 1.2rem;
+        color: #495057;
+        text-align: center;
+        margin-bottom: 10px;
+    }
+
+    .player-info {
+        font-size: 1rem;
+        color: #6c757d;
+    }
+
+    .round-winner, .game-winner {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .round-winner h2 {
+            color: #17a2b8;
+            font-size: 1.5rem;
+        }
+
+        .game-winner h1 {
+            color: #28a745;
+            font-size: 2rem;
+        }
+
+</style>
+
