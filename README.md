@@ -19,7 +19,29 @@ The **War Game Application** is a card-based game built using .NET and Blazor. T
 - **Development Environment**: Visual Studio
 
 ## Project Structure
-├── App.razor # Root component of the application ├── Data/ │ ├── Card.cs # Represents a card in the deck │ ├── Deck.cs # Logic for the deck of cards │ ├── Hand.cs # Represents a player's hand │ ├── PlayedCards.cs # Tracks played cards │ ├── PlayerHands.cs # Manages player hands ├── Pages/ │ ├── Game.razor # Main game page │ ├── PlayerHand.razor # Displays player hand details │ ├── Index.razor # Homepage ├── Services/ │ ├── CardWarService.cs # Game logic implementation │ ├── ICardWarService.cs # Interface for game services ├── Shared/ │ ├── MainLayout.razor # Main layout component │ ├── NavMenu.razor # Navigation menu ├── wwwroot/ │ ├── css/ # Static CSS files │ ├── favicon.ico # Favicon for the application ├── appsettings.json # Application configuration ├── Program.cs # Application entry point └── War_Game_App.sln # Visual Studio solution file
+├── App.razor                         # Root component of the application
+├── Data/
+│   ├── Card.cs                       # Represents a card in the deck
+│   ├── Deck.cs                       # Logic for the deck of cards
+│   ├── Hand.cs                       # Represents a player's hand
+│   ├── PlayedCards.cs                # Tracks played cards
+│   ├── PlayerHands.cs                # Manages player hands
+├── Pages/
+│   ├── Game.razor                    # Main game page
+│   ├── PlayerHand.razor              # Displays player hand details
+│   ├── Index.razor                   # Homepage
+├── Services/
+│   ├── CardWarService.cs             # Game logic implementation
+│   ├── ICardWarService.cs            # Interface for game services
+├── Shared/
+│   ├── MainLayout.razor              # Main layout component
+│   ├── NavMenu.razor                 # Navigation menu
+├── wwwroot/
+│   ├── css/                          # Static CSS files
+│   ├── favicon.ico                   # Favicon for the application
+├── appsettings.json                  # Application configuration
+├── Program.cs                        # Application entry point
+└── War_Game_App.sln                  # Visual Studio solution file
 
 Screenshots
 Home Page
