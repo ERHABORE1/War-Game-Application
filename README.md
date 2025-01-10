@@ -52,7 +52,7 @@ The **War Game Application** is a card-based game built using .NET and Blazor. T
 ├── appsettings.json                  # Application configuration
 ├── Program.cs                        # Application entry point
 └── War_Game_App.sln                  # Visual Studio solution file
-
+```
 
 ## Gameplay Instructions
 
@@ -63,10 +63,12 @@ The **War Game Application** is a card-based game built using .NET and Blazor. T
 ## Screenshots
 
 ### Home Page
-![Home Page](assets/Screenshot%20(104).png)
+![Screenshot (104)](https://github.com/user-attachments/assets/3a1df205-2253-403a-ab74-1aea933bf05f)
+
 
 ### Game Page
-![Game Page](assets/Screenshot%20(105).png)
+![Screenshot (105)](https://github.com/user-attachments/assets/5ac413be-f835-48f7-bea7-8e6efd24e9b4)
+
 
 ## License
 
